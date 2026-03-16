@@ -23,6 +23,6 @@
 * **Frontend:** Next.js, React
 * **Backend:** Node.js, Next.js API Routes
 * **Database & Auth:** Firebase (Firestore & Firebase Authentication)
-* **Styling:** CSS Modules / Tailwind CSS *(update this based on what you used)*
+* **Styling:** CSS 
 
 ---
