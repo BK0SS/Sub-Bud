@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
       </div>
       <div>
         <p>Facing Issues? <a>Help</a></p>
-        <p>Feedback? <a>Share it</a></p>
+        <p>Feedback? <a href="https://www.linkedin.com/in/bogdan-kosulin/" target="_blank">Share it</a></p>
         <div>
           <Link href={'/privacy'}>Privacy Policy</Link>
           <Link href={'/tos'}>Terms of Service</Link>
