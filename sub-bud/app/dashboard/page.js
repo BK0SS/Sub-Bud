@@ -1,53 +1,52 @@
-'use client'
+"use client";
 
 import Login from "@/components/Login";
 import SubscriptionForm from "@/components/SubscriptionForm";
 import SubscriptionsDisplay from "@/components/SubscriptionsDisplay";
 import SubSummary from "@/components/SubSummary";
 import { useAuth } from "@/context/AuthContext";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 const blankSub = {
-    name: '',
-    category: '',
-    cost: '',
-    currency: 'CAD',
-    billingFrequency: '',
-    nextBillingData: '', 
-    paymentMethod: '',
-    startDate: '',
-    renewalType: '',
-    notes: '',
-    status: 'Active'
-  }
+  name: "",
+  category: "",
+  cost: "",
+  currency: "CAD",
+  billingFrequency: "",
+  nextBillingData: "",
+  paymentMethod: "",
+  startDate: "",
+  renewalType: "",
+  notes: "",
+  status: "Active",
+};
 
 export default function DashboardPage() {
   const { deleteSub, userData, currentUser, loading } = useAuth();
   const isAuthenticated = !!currentUser;
-  
+
   const [isAddEntry, setIsAddEntry] = useState(false);
   const [formData, setFormData] = useState(blankSub);
 
   function handleChangeInput(e) {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   }
 
   function handleEditSubscription(index) {
-    
     if (!userData?.subscriptions) return;
-    
+
     const data = userData.subscriptions[index];
     setFormData(data);
-    
-    deleteSub(index); 
-    
+
+    deleteSub(index);
+
     setIsAddEntry(true);
   }
 
-  function handleReset(){
+  function handleReset() {
     setFormData(blankSub);
   }
 
@@ -55,36 +54,38 @@ export default function DashboardPage() {
     setIsAddEntry(!isAddEntry);
   }
 
-  
   if (loading) {
     return <div>Loading...</div>;
   }
 
   if (!isAuthenticated) {
-    return <Login />;
+    return (
+      <Suspense>
+        <Login />
+      </Suspense>
+    );
   }
 
- 
   function handleFormSubmit() {
-   
-     console.log("Saving data:", formData);
-     handleToggleInput(); 
+    console.log("Saving data:", formData);
+    handleToggleInput();
   }
 
   return (
     <>
       <SubSummary />
-      <SubscriptionsDisplay 
-        handleEditSubscription={handleEditSubscription} 
-        handleShowInput={isAddEntry ? () => {} : handleToggleInput} 
+      <SubscriptionsDisplay
+        handleEditSubscription={handleEditSubscription}
+        handleShowInput={isAddEntry ? () => {} : handleToggleInput}
       />
-      
+
       {isAddEntry && (
-        <SubscriptionForm handleReset = {handleReset}
-          onSubmit={handleFormSubmit} 
-          closeInput={handleToggleInput} 
-          formData={formData} 
-          handleChangeInput={handleChangeInput} 
+        <SubscriptionForm
+          handleReset={handleReset}
+          onSubmit={handleFormSubmit}
+          closeInput={handleToggleInput}
+          formData={formData}
+          handleChangeInput={handleChangeInput}
         />
       )}
     </>
