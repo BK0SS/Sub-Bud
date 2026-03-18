@@ -60,7 +60,7 @@ export default function DashboardPage() {
 
   if (!isAuthenticated) {
     return (
-      <Suspense>
+      <Suspense fallback={<p>Loading...</p>}>
         <Login />
       </Suspense>
     );
