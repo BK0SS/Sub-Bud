@@ -1,14 +1,19 @@
+import { useAuth } from "@/context/AuthContext";
 import { getDaysUntilNextCharge, subscriptions } from "@/utils";
 
 export default function SubscriptionsDisplay(props) {
+  const { handleShowInput, handleEditSubscription } = props;
+  const { deleteSub, userData } = useAuth();
 
-  const {handleShowInput} = props;
+  if (!userData?.subscriptions) {
+    return null;
+  }
 
   return (
     <section>
       <h2>Your Subscriptions</h2>
       <div className="card-container">
-        {subscriptions.map((sub, subIndex) => {
+        {userData.subscriptions.map((sub, subIndex) => {
           const {
             name,
             category,
@@ -48,29 +53,48 @@ export default function SubscriptionsDisplay(props) {
                   <h4>{startDate}</h4>
                 </div>
                 <div>
-                  <p>Due: {getDaysUntilNextCharge(startDate, billingFrequency)} days</p>
-                
+                  {(() => {
+                    const days = getDaysUntilNextCharge(
+                      startDate,
+                      billingFrequency,
+                    );
+                    return typeof days === "number" ? (
+                      <p>Due: {days} days</p>
+                    ) : (
+                      <p>{days}</p>
+                    );
+                  })()}
                 </div>
-
               </div>
               <div className="white-line"></div>
-                <p>{notes}</p>
+              <p>{notes}</p>
 
-                <div className="subscription-actions">
-                  <button className="button-card">
-                    <i className="fa-solid fa-pen-to-square"></i>
-                    Edit
-                  </button>
-                  <button className="button-card">
-                    <i className="fa-solid fa-trash"></i>
-                    Delete
-                  </button>
-                </div>
+              <div className="subscription-actions">
+                <button
+                  onClick={() => {
+                    handleEditSubscription(subIndex);
+                  }}
+                  className="button-card"
+                >
+                  <i className="fa-solid fa-pen-to-square"></i>
+                  Edit
+                </button>
+                <button
+                  onClick={() => deleteSub(subIndex)}
+                  className="button-card"
+                >
+                  <i className="fa-solid fa-trash"></i>
+                  Delete
+                </button>
+              </div>
             </div>
           );
         })}
 
-        <button onClick={handleShowInput} className="button-card add-subscription">
+        <button
+          onClick={handleShowInput}
+          className="button-card add-subscription"
+        >
           <i className="fa-solid fa-plus"></i>
           <h5>Add new sbscription</h5>
         </button>

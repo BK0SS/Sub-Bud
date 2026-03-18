@@ -18,35 +18,58 @@ export const calculateSubscriptionMetrics = (subscriptions) => {
         const cost = parseFloat(sub.cost) || 0;
         const billingFrequency = sub.billingFrequency;
 
-        const monthly_cost = billingFrequency === "Yearly" ? cost / 12 : cost;
-        total_monthly_cost += monthly_cost;
-        total_yearly_cost += billingFrequency === "Yearly" ? cost : cost * 12;
+        // 1. FIXED: Accurate cost calculation for all frequencies
+        let monthly_cost = 0;
+        let yearly_cost = 0;
 
-        // Track category spending
+        if (billingFrequency === "Monthly") {
+            monthly_cost = cost;
+            yearly_cost = cost * 12;
+        } else if (billingFrequency === "Yearly") {
+            monthly_cost = cost / 12;
+            yearly_cost = cost;
+        } else if (billingFrequency === "Quarterly") {
+            monthly_cost = cost / 3;
+            yearly_cost = cost * 4;
+        } // One-time costs are ignored for recurring metrics
+
+        total_monthly_cost += monthly_cost;
+        total_yearly_cost += yearly_cost;
+
+        // Track category spending (using the true monthly cost is usually best here)
         if (!category_spending[sub.category]) {
             category_spending[sub.category] = 0;
         }
-        category_spending[sub.category] += cost;
+        category_spending[sub.category] += monthly_cost;
 
-        // Determine most expensive subscription
-        if (!most_expensive_subscription || cost > most_expensive_subscription.cost) {
-            most_expensive_subscription = sub;
+        // Determine most expensive subscription (comparing monthly cost to be fair across frequencies)
+        if (!most_expensive_subscription || monthly_cost > (most_expensive_subscription.monthly_equivalent || 0)) {
+            most_expensive_subscription = { ...sub, monthly_equivalent: monthly_cost };
         }
 
-        // Calculate next billing date
-        const start_date = new Date(sub.startDate);
-        let next_billing_date = new Date(start_date);
-        while (next_billing_date < today) {
-            if (billingFrequency === "Monthly") {
-                next_billing_date.setMonth(next_billing_date.getMonth() + 1);
-            } else if (billingFrequency === "Yearly") {
-                next_billing_date.setFullYear(next_billing_date.getFullYear() + 1);
+        // 2. FIXED: Prevent Infinite Loop for next billing date
+        if (billingFrequency !== "One-time") {
+            const start_date = new Date(sub.startDate);
+            let next_billing_date = new Date(start_date);
+            
+            // Safety counter to prevent edge-case infinite loops
+            let loopSafety = 0; 
+            
+            while (next_billing_date < today && loopSafety < 1000) {
+                if (billingFrequency === "Monthly") {
+                    next_billing_date.setMonth(next_billing_date.getMonth() + 1);
+                } else if (billingFrequency === "Yearly") {
+                    next_billing_date.setFullYear(next_billing_date.getFullYear() + 1);
+                } else if (billingFrequency === "Quarterly") {
+                    next_billing_date.setMonth(next_billing_date.getMonth() + 3);
+                }
+                loopSafety++;
             }
-        }
 
-        // Count upcoming billing within the next 7 days
-        if (next_billing_date >= today && next_billing_date <= next_week) {
-            upcoming_billing_count++;
+            // Count upcoming billing within the next 7 days
+            if (next_billing_date >= today && next_billing_date <= next_week) {
+                upcoming_billing_count++;
+            }
         }
     });
 
@@ -147,36 +170,41 @@ export const formatKey = (key) => {
 }
 
 export function getDaysUntilNextCharge(startDate, billingFrequency) {
-    const start = new Date(startDate)
-    const today = new Date()
+    const start = new Date(startDate);
+    
+    // Create today's date and force it to midnight (00:00:00)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
 
-    let nextBillingDate = new Date(start)
+    let nextBillingDate = new Date(start);
+    // Force start date to midnight to prevent timezone/hour shifting bugs
+    nextBillingDate.setHours(0, 0, 0, 0); 
 
-    if (billingFrequency === "Monthly") {
-        // Add months until next charge is in the future
-        while (nextBillingDate <= today) {
-            nextBillingDate.setMonth(nextBillingDate.getMonth() + 1)
+    // THE FIX: Provide a default just in case the form submitted undefined
+    const freq = billingFrequency || "Monthly";
+
+    if (freq === "Monthly") {
+        // Changed to < so bills due exactly today show as 0 days
+        while (nextBillingDate < today) {
+            nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
         }
-    } else if (billingFrequency === "Yearly") {
-        // Add years until next charge is in the future
-        while (nextBillingDate <= today) {
-            nextBillingDate.setFullYear(nextBillingDate.getFullYear() + 1)
+    } else if (freq === "Yearly") {
+        while (nextBillingDate < today) {
+            nextBillingDate.setFullYear(nextBillingDate.getFullYear() + 1);
         }
-    } else if (billingFrequency === "Quarterly") {
-        // Add quarters (3 months)
-        while (nextBillingDate <= today) {
-            nextBillingDate.setMonth(nextBillingDate.getMonth() + 3)
+    } else if (freq === "Quarterly") {
+        while (nextBillingDate < today) {
+            nextBillingDate.setMonth(nextBillingDate.getMonth() + 3);
         }
-    } else if (billingFrequency === "One-time") {
-        // No recurring charges
-        return "No upcoming charges"
+    } else if (freq === "One-time") {
+        return "No upcoming charges";
     }
 
     // Calculate the number of days until next charge
-    const diffTime = nextBillingDate - today
-    const daysUntilNextCharge = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const diffTime = nextBillingDate.getTime() - today.getTime();
+    const daysUntilNextCharge = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    return daysUntilNextCharge
+    return daysUntilNextCharge;
 }
 
 // Example Usage

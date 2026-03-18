@@ -1,38 +1,21 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
 import { useState } from "react";
 
 export default function SubscriptionForm(props) {
 
-    const {onSubmit, closeInput} = props;
-
-    const [formData, setFormData] = useState({
-        name:'',
-        category:'',
-        cost:'',
-        currency:'CAD',
-        billingFrequency:'',
-        nextBillingData:'',
-        paymentMethod:'',
-        startDate:'',
-        renewalType:'',
-        notes:'',
-        status:'Active'
-
-    })
-
-    function handleChangeInput(e){
-        const newData = {...formData,
-            [e.target.name]: e.target.value
-        }
-        setFormData(newData);
-    }
+    const {onSubmit, closeInput, formData, handleChangeInput, handleReset} = props;
+    const {addSub} = useAuth();
+    
 
 
     //form submit
     function handleFormSubmit(e){
         e.preventDefault(); //prevents reloading on submit 
-        onSubmit();
+        addSub(formData)
+        handleReset()
+        closeInput()
         
     }
 
