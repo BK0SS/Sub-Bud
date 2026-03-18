@@ -96,7 +96,7 @@ export default function SubscriptionsDisplay(props) {
           className="button-card add-subscription"
         >
           <i className="fa-solid fa-plus"></i>
-          <h5>Add new sbscription</h5>
+          <h5>Add new subscription</h5>
         </button>
       </div>
     </section>
