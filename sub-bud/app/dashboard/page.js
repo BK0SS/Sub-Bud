@@ -7,18 +7,21 @@ import SubSummary from "@/components/SubSummary";
 import { useAuth } from "@/context/AuthContext";
 import { Suspense, useState } from "react";
 
+
+//
+
 const blankSub = {
   name: "",
-  category: "",
+  category: "Entertainment",      
   cost: "",
-  currency: "CAD",
-  billingFrequency: "",
+  currency: "CAD",               
+  billingFrequency: "Monthly",  
   nextBillingData: "",
-  paymentMethod: "",
+  paymentMethod: "Credit Card", 
   startDate: "",
   renewalType: "",
   notes: "",
-  status: "Active",
+  status: "Active",              
 };
 
 export default function DashboardPage() {
