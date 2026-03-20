@@ -37,8 +37,8 @@ export default function RootLayout({ children }) {
         <p>Facing Issues? <a>Help</a></p>
         <p>Feedback? <a href="https://www.linkedin.com/in/bogdan-kosulin/" target="_blank">Share it</a></p>
         <div>
-          <Link href={'/privacy'}>Privacy Policy</Link>
-          <Link href={'/tos'}>Terms of Service</Link>
+          <Link href={'/privacy'}><button data-bwignore>Privacy Policy</button></Link>
+          <Link href={'/tos'}><button data-bwignore>Terms of Service</button></Link>
         </div>
       </div>
     </div>

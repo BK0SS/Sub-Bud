@@ -46,7 +46,7 @@ export default function SubscriptionsDisplay(props) {
                 <h2>${cost}</h2>
                 <p>{currency}</p>
               </div>
-              <small>per {billingFrequency}</small>
+              <small>{billingFrequency}</small>
               <div className="sub-renewal">
                 <div>
                   <p>Started</p>
