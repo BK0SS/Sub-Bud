@@ -9,24 +9,25 @@ import { Suspense, useState } from "react";
 
 const blankSub = {
   name: "",
-  category: "Entertainment",
+  category: "Entertainment",      
   cost: "",
-  currency: "CAD",
-  billingFrequency: "Monthly",
+  currency: "CAD",               
+  billingFrequency: "Monthly",  
   nextBillingData: "",
-  paymentMethod: "Credit Card",
+  paymentMethod: "Credit Card", 
   startDate: "",
   renewalType: "",
   notes: "",
-  status: "Active",
+  status: "Active",              
 };
 
 export default function DashboardPage() {
-  const { deleteSub, userData, currentUser, loading } = useAuth();
+  const { userData, currentUser, loading } = useAuth();
   const isAuthenticated = !!currentUser;
 
   const [isAddEntry, setIsAddEntry] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
   const [formData, setFormData] = useState(blankSub);
 
   function handleChangeInput(e) {
@@ -41,9 +42,7 @@ export default function DashboardPage() {
 
     const data = userData.subscriptions[index];
     setFormData(data);
-
-    deleteSub(index);
-
+    setEditIndex(index);
     setIsEditing(true);
     setIsAddEntry(true);
   }
@@ -56,6 +55,7 @@ export default function DashboardPage() {
     setIsAddEntry(!isAddEntry);
     if (isAddEntry) {
       setIsEditing(false);
+      setEditIndex(null);
       handleReset();
     }
   }
@@ -92,6 +92,7 @@ export default function DashboardPage() {
           formData={formData}
           handleChangeInput={handleChangeInput}
           isEditing={isEditing}
+          editIndex={editIndex}
         />
       )}
     </>

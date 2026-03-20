@@ -3,12 +3,18 @@
 import { useAuth } from "@/context/AuthContext";
 
 export default function SubscriptionForm(props) {
-  const { onSubmit, closeInput, formData, handleChangeInput, handleReset, isEditing } = props;
-  const { addSub } = useAuth();
+  const { onSubmit, closeInput, formData, handleChangeInput, handleReset, isEditing, editIndex } = props;
+  const { addSub, updateSub } = useAuth();
 
   function handleFormSubmit(e) {
     e.preventDefault();
-    addSub(formData);
+    
+    if (isEditing) {
+      updateSub(editIndex, formData);
+    } else {
+      addSub(formData);
+    }
+    
     handleReset();
     closeInput();
   }
