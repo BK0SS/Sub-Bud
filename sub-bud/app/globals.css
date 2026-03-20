@@ -98,6 +98,23 @@ main{
   gap: 1rem;
 }
 
+.hero-roadmap{
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 1rem;
+  padding: 1rem 1rem 1rem 1rem;
+
+}
+.hero-roadmap h2:first-of-type{
+  color: var(--border-highlight);
+}
+.hero-roadmap >div{
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 .hero-display .card>div:first-of-type{
   display: flex;
   flex-direction: column;
@@ -274,6 +291,42 @@ form textarea{
   resize: none;
   
 }
+
+/* Modal & Blanket */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100; 
+  padding: 1rem;
+  backdrop-filter: blur(12px); 
+}
+
+.modal-content {
+  /* Mixes variable with transparency very cool.  */
+  background-color: color-mix(in srgb, var(--background-primary) 70%, transparent);
+  
+  width: 100%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto; 
+  border-radius: var(--border-radius-large, 1rem);
+  padding: 2rem;
+  box-shadow: 10px 10px 25px 25px rgba(0, 0, 0, 0.5);
+
+  backdrop-filter: blur(10px); 
+}
+
+.modal-content section {
+  gap: 1.5rem;
+}
+
 /* login */
 .login{
   display: flex;

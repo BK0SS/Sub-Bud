@@ -22,7 +22,8 @@ export default function SubSummary() {
   return (
     <section>
       <h2>Subscription analytics</h2>
-      <div className="analytics-card">
+      {Object.keys(userData.subscriptions).length === 0 ? (<div className="analytics-card"><div className="analytics-item"><h1>No subscriptions yet!</h1></div></div>) : 
+      (<div className="analytics-card">
         {Object.keys(summary).map((metric, metricIndex) => (
           <div key={metricIndex} className="analytics-item">
             <p>
@@ -31,7 +32,9 @@ export default function SubSummary() {
             <h4>{summary[metric]}</h4>
           </div>
         ))}
-      </div>
+      </div>)}
+      
+
     </section>
   );
 }

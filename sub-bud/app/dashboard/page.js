@@ -7,21 +7,18 @@ import SubSummary from "@/components/SubSummary";
 import { useAuth } from "@/context/AuthContext";
 import { Suspense, useState } from "react";
 
-
-//
-
 const blankSub = {
   name: "",
-  category: "Entertainment",      
+  category: "Entertainment",
   cost: "",
-  currency: "CAD",               
-  billingFrequency: "Monthly",  
+  currency: "CAD",
+  billingFrequency: "Monthly",
   nextBillingData: "",
-  paymentMethod: "Credit Card", 
+  paymentMethod: "Credit Card",
   startDate: "",
   renewalType: "",
   notes: "",
-  status: "Active",              
+  status: "Active",
 };
 
 export default function DashboardPage() {
@@ -29,6 +26,7 @@ export default function DashboardPage() {
   const isAuthenticated = !!currentUser;
 
   const [isAddEntry, setIsAddEntry] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(blankSub);
 
   function handleChangeInput(e) {
@@ -46,6 +44,7 @@ export default function DashboardPage() {
 
     deleteSub(index);
 
+    setIsEditing(true);
     setIsAddEntry(true);
   }
 
@@ -55,6 +54,10 @@ export default function DashboardPage() {
 
   function handleToggleInput() {
     setIsAddEntry(!isAddEntry);
+    if (isAddEntry) {
+      setIsEditing(false);
+      handleReset();
+    }
   }
 
   if (loading) {
@@ -70,7 +73,6 @@ export default function DashboardPage() {
   }
 
   function handleFormSubmit() {
-    console.log("Saving data:", formData);
     handleToggleInput();
   }
 
@@ -89,6 +91,7 @@ export default function DashboardPage() {
           closeInput={handleToggleInput}
           formData={formData}
           handleChangeInput={handleChangeInput}
+          isEditing={isEditing}
         />
       )}
     </>
