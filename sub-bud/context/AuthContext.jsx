@@ -5,9 +5,10 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
-  signOut,
+  signOut, 
+  deleteUser
 } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
 import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
@@ -90,7 +91,25 @@ export default function AuthProvider(props) {
     });
 
     setUserData({ subscriptions: newSubs });
-    await saveToFirebase(newSubs);
+    await
+     saveToFirebase(newSubs);
+  }
+
+  async function deleteAccount() 
+  {
+    if(!currentUser) return;
+    try {
+      const docRef = doc(db,"users",currentUser.uid)
+      await deleteDoc(docRef);
+      await deleteUser(currentUser)
+
+      setCurrentUser(null);
+      setUserData(null)
+    } catch (err) {
+      console.log(err.message)
+      throw err;
+    }
+    
   }
 
   useEffect(() => {
@@ -132,6 +151,7 @@ export default function AuthProvider(props) {
     addSub,
     updateSub,
     deleteSub,
+    deleteAccount
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
