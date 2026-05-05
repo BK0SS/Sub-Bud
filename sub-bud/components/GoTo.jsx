@@ -24,7 +24,7 @@ export default function GoTo() {
           </Link>
         </>
       )}
-
+      {(isAuthenticated && path == "/dashboard") && (<Link href={"/account"}><button>Account</button></Link>)}
       {(isAuthenticated && path == "/dashboard") && (<button onClick={logout}>Logout</button>)}
     </div>
   );
