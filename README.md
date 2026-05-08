@@ -1,4 +1,4 @@
-# 💸 Sub-Bud
+# 💸 Sub-Bud | LIVE DEMO: https://subscription-bud.com/
 
 > A clean, intuitive subscription tracking application designed to help users manage their recurring expenses and take control of their budget.
 
